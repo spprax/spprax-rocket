@@ -1,23 +1,37 @@
 import React from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {content : ''};
+  }
+
+  componentDidMount() {
+    this.getInformation();
+  }
+
+  getInformation() {
+    fetch('http://localhost:9000/')
+      .then(res => res.json())
+      .then(res => this.setState({content: res.content}))
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <h1>
+          This is the react front-end.
+        </h1>
+
+        <p dangerouslySetInnerHTML={{
+            __html: this.state.content
+          }}
+        ></p>
+      </div>
+    );
+  }
 }
 
 export default App;
