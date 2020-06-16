@@ -12,4 +12,14 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.get('/api', function(req, res, next) {
+  res.json({
+    title: 'server-api',
+    content: `
+      <h1>Spprax-Server-API</h1>
+      <p>Welcome to sprocket backend.</h1>
+    `
+  });
+});
+
 module.exports = router;

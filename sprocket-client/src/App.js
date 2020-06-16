@@ -13,7 +13,7 @@ class App extends React.Component {
   }
 
   getInformation() {
-    fetch('http://localhost:9000/')
+    fetch('/api')
       .then(res => res.json())
       .then(res => this.setState({content: res.content}))
   }
