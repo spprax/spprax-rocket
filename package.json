@@ -1,0 +1,19 @@
+{
+  "name": "SppraxRocket",
+  "version": "1.0.0",
+  "description": "Spprax rocket powers the next generation of digital engagement tools",
+  "main": "sprocket-server/app.js",
+  "repository": "https://Ray-F@github.com/Ray-F/spprax-rocket.git",
+  "author": "Raymond Feng <rf.raymondfeng@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "concurrently": "^5.2.0"
+  },
+
+  "scripts": {
+    "client-start": "cd sprocket-client && yarn run start",
+    "server-start": "cd sprocket-server && yarn run start",
+    "start": "concurrently \"yarn run server-start\" \"yarn run client-start\""
+  }
+}
