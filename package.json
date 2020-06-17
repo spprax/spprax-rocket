@@ -14,6 +14,10 @@
   "scripts": {
     "client-start": "cd sprocket-client && yarn run start",
     "server-start": "cd sprocket-server && yarn run start",
-    "start": "concurrently \"yarn run server-start\" \"yarn run client-start\""
+    "start": "concurrently \"yarn run server-start\" \"yarn run client-start\"",
+
+    "client-install": "cd sprocket-client && yarn install",
+    "server-install": "cd sprocket-server && yarn install",
+    "install": "yarn run server-install && yarn run client-install"
   }
 }
