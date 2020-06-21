@@ -1,5 +1,8 @@
 import React from 'react';
 
+import Question from './Components/Question';
+import Button from './Components/Button';
+
 class App extends React.Component {
 
   constructor(props) {
@@ -8,7 +11,12 @@ class App extends React.Component {
     this.state = {
       title: "Questions",
       questions: [],
+      currentQuestionIndex: 0,
+
+      qAnswers: [],
     };
+
+    this.handleChangeIndex = this.handleChangeIndex.bind(this);
   }
 
   componentDidMount() {
@@ -23,50 +31,65 @@ class App extends React.Component {
       let newObj = await res.json();
 
       this.setState((prevState) => ({
-        questions: prevState.questions.concat(newObj)
-      }), );
+        questions: newObj,
+        qAnswers: new Array(newObj.length).fill(null),
+      }));
     });
   }
 
-  listOptions(options) {
-    if (options) {
-      return options.map((option, index) => {
-        return (
-          <li key={index}>{option}</li>
-        )
-      });
+  // direction of set {1, -1}
+  handleChangeIndex(direction) {
+    let currentQuestionIndex = this.state.currentQuestionIndex;
+
+    if (this.state.questions[currentQuestionIndex + direction]) {
+      this.setState({ currentQuestionIndex: currentQuestionIndex += direction });
     } else {
-      return (
-        <li>-</li>
-      )
+      return (500, "Error: Specified question index does not exist!");
     }
   }
 
-  listItems() {
-    return this.state.questions.map((question) => {
-      return (
-        <ul key={question.id} className='question'>
-          <li className='q-title'>{question.title}</li>
-          <li className='q-content'>{question.content}</li>
-          <li className='q-type'>{question.type}</li>
-          <li className='q-options'>
-            Options
-            <ul>{this.listOptions(question.options)}</ul>
-          </li>
-          <li className='q-prompt'>{question.prompt}</li>
-        </ul>
-      )
-    });
-  }
-
   render() {
+    let currentIndex = this.state.currentQuestionIndex;
+
+    let questionList = this.state.questions.map((qn) => {
+      return (
+        <Question
+          key={qn.id}
+          question={this.state.questions[qn.id]}
+          toggleOn={qn.id == currentIndex}
+          id={qn.id}
+        />
+      );
+    })
+
     return (
       <div className="App">
         <h1>
           { this.state.title }
         </h1>
 
-        { this.listItems() }
+        <ul>
+          {questionList}
+        </ul>
+
+        <Button
+          className='btn'
+          text='Previous'
+          change={this.handleChangeIndex}
+          direction={-1}
+          toggleOn={this.state.currentQuestionIndex !== 0}
+        />
+
+        <Button
+          className='btn'
+          text='Next'
+          change={this.handleChangeIndex}
+          direction={1}
+          toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
+        />
+
+
+
       </div>
     );
   }

@@ -26,7 +26,7 @@ function makeJsonResponse(row) {
     title: row.Title,
     content: row.Content,
     type: row.Type,
-    options: row.Options ? row.Options.split(", ") : null,
+    options: row.Options ? row.Options.split(",").map((option) => {return option.replace("\n", "").trim()}) : null,
     prompt: row.Prompt ? row.Prompt : ""
   }
 }
