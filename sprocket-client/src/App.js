@@ -9,7 +9,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      title: "Questions",
+      title: "",
       questions: [],
       currentQuestionIndex: 0,
 
@@ -17,6 +17,8 @@ class App extends React.Component {
     };
 
     this.handleChangeIndex = this.handleChangeIndex.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.setAnswer = this.setAnswer.bind(this);
   }
 
   componentDidMount() {
@@ -37,15 +39,29 @@ class App extends React.Component {
     });
   }
 
+  setAnswer(answer) {
+    let index = this.state.currentQuestionIndex;
+    // Change current answer object based on new values.
+    let currentAnswers = this.state.qAnswers;
+    currentAnswers[index] = answer;
+    this.setState({ qAnswers: currentAnswers})
+  }
+
   // direction of set {1, -1}
   handleChangeIndex(direction) {
     let currentQuestionIndex = this.state.currentQuestionIndex;
+
+
 
     if (this.state.questions[currentQuestionIndex + direction]) {
       this.setState({ currentQuestionIndex: currentQuestionIndex += direction });
     } else {
       return (500, "Error: Specified question index does not exist!");
     }
+  }
+
+  handleSubmit(...args) {
+    console.log("Make ajax call here.");
   }
 
   render() {
@@ -56,14 +72,15 @@ class App extends React.Component {
         <Question
           key={qn.id}
           question={this.state.questions[qn.id]}
-          toggleOn={qn.id == currentIndex}
+          toggleOn={parseInt(qn.id) === currentIndex}
           id={qn.id}
+          onChange={this.setAnswer}
         />
       );
     })
 
     return (
-      <div className="App">
+      <div>
         <h1>
           { this.state.title }
         </h1>
@@ -72,24 +89,28 @@ class App extends React.Component {
           {questionList}
         </ul>
 
-        <Button
-          className='btn'
-          text='Previous'
-          change={this.handleChangeIndex}
-          direction={-1}
-          toggleOn={this.state.currentQuestionIndex !== 0}
-        />
+        <div className='btn-container'>
+          <Button
+            text='Previous'
+            onClick={this.handleChangeIndex}
+            direction={-1}
+            toggleOn={this.state.currentQuestionIndex !== 0}
+          />
 
-        <Button
-          className='btn'
-          text='Next'
-          change={this.handleChangeIndex}
-          direction={1}
-          toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
-        />
+          <Button
+            text='Submit'
+            onClick={this.handleSubmit}
+            direction='submit'
+            toggleOn={this.state.currentQuestionIndex + 1 === this.state.questions.length}
+          />
 
-
-
+          <Button
+            text='Next'
+            onClick={this.handleChangeIndex}
+            direction={1}
+            toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
+          />
+        </div>
       </div>
     );
   }

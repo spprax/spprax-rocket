@@ -9,25 +9,23 @@ class Button extends React.Component {
   }
 
   handleClick() {
-    this.props.change(this.props.direction);
+    this.props.onClick(this.props.direction);
   }
 
   render() {
     const styleDiv = {
       boxStyle: 'border-box',
       textAlign: 'center',
-      position: 'absolute',
-      bottom: '100px',
-      zIndex: '1',
 
       padding: '10px 0',
       width: '100px',
       border: '2px solid #555',
       borderRadius: '10px',
-      display: 'inline-block',
 
-      visibility: this.props.toggleOn ? 'visible' : 'hidden',
+      'transition': "opacity 0.25s"
     }
+
+    styleDiv.opacity = this.props.toggleOn ? "1" : "0";
 
     const styleText = {
       padding: '0',
@@ -35,7 +33,7 @@ class Button extends React.Component {
     }
 
     return (
-      <div onClick={this.handleClick} style={styleDiv}>
+      <div className='btn' onClick={this.handleClick} style={styleDiv}>
         <p style={styleText}>{ this.props.text }</p>
       </div>
     );

@@ -15,10 +15,16 @@ class Question extends React.Component {
   }
 
   renderInputMethod() {
+    let style;
+
     switch (this.props.question.type.toUpperCase()) {
       case "MULTICHOICE":
+        style = {
+          listStyle: 'none',
+          padding: '0',
+        }
         return (
-          <ol>
+          <ol style={style}>
             {this.props.question.options.map((option, index) => {
               return (
                 <li key={index}>
@@ -26,7 +32,10 @@ class Question extends React.Component {
                     name={this.props.id}
                     value={option}
                     type='radio'
-                    onChange={e => this.setState({ answer: e.target.value })}
+                    onChange={e => {
+                      this.props.onChange(e.target.value);
+                      this.setState({ answer: e.target.value});
+                    }}
                   /> {option}
                 </li>
               );
@@ -35,12 +44,24 @@ class Question extends React.Component {
         );
 
       case "INPUT":
+        style = {
+          boxStyle: 'border-box',
+          padding: '10px',
+          border: "0",
+          outline: "none",
+
+          borderBottom: "1px solid #555"
+        };
 
         return (
           <input
+            style={style}
             type='text'
             placeholder={this.props.question.prompt}
-            onChange={e => this.setState({ answer: e.target.value })}
+            onChange={e => {
+              this.props.onChange(e.target.value);
+              this.setState({ answer: e.target.value});
+            }}
           />
         );
 
@@ -53,7 +74,10 @@ class Question extends React.Component {
               type='range'
               min={options[0]}
               max={options[1]}
-              onChange={e => this.setState({ answer: e.target.value })}
+              onChange={e => {
+                this.props.onChange(e.target.value);
+                this.setState({ answer: e.target.value});
+              }}
               defaultValue={options[0]}
             />
             <span> {this.state.answer}</span>
@@ -70,8 +94,7 @@ class Question extends React.Component {
     if (this.props.toggleOn) {
       style = {
         opacity: '1',
-        display: 'block',
-        position: 'absolute',
+        zIndex: '0',
 
         transition: 'opacity 0.5s',
         transitionDelay: '0.5s',
@@ -79,8 +102,7 @@ class Question extends React.Component {
     } else {
       style = {
         opacity: '0',
-        display: 'block',
-        position: 'absolute',
+        zIndex: '-1',
 
         transition: 'opacity 0.5s',
         transitionDelay: '0s',
@@ -90,8 +112,10 @@ class Question extends React.Component {
     return (
 
       <li className='question' style={style}>
-        <h4>{this.props.question.content}</h4>
-        {this.renderInputMethod()}
+        <div className='question-content'>
+          <h4><span>{parseInt(this.props.question.id) + 1}. </span>{this.props.question.content}</h4>
+          {this.renderInputMethod()}
+        </div>
       </li>
     );
   }
