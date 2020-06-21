@@ -2,6 +2,7 @@ import React from 'react';
 
 import Question from './Components/Question';
 import Button from './Components/Button';
+import ProgressBar from './Components/ProgressBar';
 
 class App extends React.Component {
 
@@ -19,6 +20,7 @@ class App extends React.Component {
     this.handleChangeIndex = this.handleChangeIndex.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.setAnswer = this.setAnswer.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   componentDidMount() {
@@ -55,6 +57,8 @@ class App extends React.Component {
 
     if (this.state.questions[currentQuestionIndex + direction]) {
       this.setState({ currentQuestionIndex: currentQuestionIndex += direction });
+    } else if (currentQuestionIndex + direction === this.state.questions.length) {
+      this.handleSubmit();
     } else {
       return (500, "Error: Specified question index does not exist!");
     }
@@ -62,6 +66,22 @@ class App extends React.Component {
 
   handleSubmit(...args) {
     console.log("Make ajax call here.");
+  }
+
+  handleKeyPress(event) {
+    switch (event.key) {
+      case "n":
+      case "Enter":
+        this.handleChangeIndex(1);
+        break;
+
+      case "p":
+        this.handleChangeIndex(-1);
+        break;
+
+      default:
+        return null;
+    }
   }
 
   render() {
@@ -80,18 +100,19 @@ class App extends React.Component {
     })
 
     return (
-      <div>
+      <div className='app' onKeyDown={this.handleKeyPress} tabIndex="0">
         <h1>
           { this.state.title }
         </h1>
 
-        <ul>
+        <ul className='question-container'>
           {questionList}
         </ul>
 
         <div className='btn-container'>
           <Button
             text='Previous'
+            keyPrompt="P"
             onClick={this.handleChangeIndex}
             direction={-1}
             toggleOn={this.state.currentQuestionIndex !== 0}
@@ -99,6 +120,7 @@ class App extends React.Component {
 
           <Button
             text='Submit'
+            keyPrompt='Ent.'
             onClick={this.handleSubmit}
             direction='submit'
             toggleOn={this.state.currentQuestionIndex + 1 === this.state.questions.length}
@@ -106,11 +128,18 @@ class App extends React.Component {
 
           <Button
             text='Next'
+            keyPrompt='Ent.'
             onClick={this.handleChangeIndex}
             direction={1}
             toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
           />
         </div>
+
+        <ProgressBar
+          currentIndex={this.state.currentQuestionIndex}
+          indexLength={this.state.questions.length}
+          toggleOn={this.state.questions.length !== 0}
+        />
       </div>
     );
   }

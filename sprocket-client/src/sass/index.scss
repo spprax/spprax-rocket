@@ -5,30 +5,118 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-container {
+  position: absolute;
+  width: 400px;
+  height: 300px;
+  transform: translate(0, -150px);
+}
+
 .question {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-
   display: flex;
-  align-items: center;
   justify-content: center;
 
   list-style: none;
-  padding: 0 0 200px 0;
+  margin: 0;
+  padding: 0;
+
+  input[type='range'] {
+    $backgroundThumb: grey;
+
+    -webkit-appearance: none;
+    width: 80%;
+    height: 10px;
+    background: #ccc;
+
+    &::-moz-range-thumb {
+      height: 20px;
+      width: 16px;
+
+      background: $backgroundThumb;
+      cursor: pointer;
+      transition-duration: 0.25s;
+
+      &:hover {
+        background: turquoise;
+        transition-duration: 0.25s;
+      }
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 16px;
+
+      background: $backgroundThumb;
+      cursor: pointer;
+
+      transition-duration: 0.25s;
+
+      &:hover {
+        background: turquoise;
+        transition-duration: 0.25s;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &::-ms-track {
+      width: 80%;
+      cursor: pointer;
+
+      background: transparent;
+      border-color: transparent;
+      color: transparent;
+    }
+  }
 }
 
 .btn-container {
+  z-index: 1;
   width: 400px;
+  height: 40px;
   margin: 0 auto;
 
   display: flex;
   justify-content: space-between;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 55vh;
+  .btn {
+    &:after {
+      content: '';
+      display: block;
+      background: #fff;
+      height: 2px;
+      width: 0px;
+      margin-top: 3px;
+
+      transition: width 0.5s;
+    }
+
+    &:hover {
+      cursor: pointer;
+
+      &:after {
+
+        width: 70px;
+        transition: width 0.5s;
+      }
+    }
+  }
+}
+
+.progress-container {
+  margin: 40px auto;
+  width: 400px;
 }

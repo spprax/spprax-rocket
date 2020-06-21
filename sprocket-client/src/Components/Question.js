@@ -23,11 +23,15 @@ class Question extends React.Component {
           listStyle: 'none',
           padding: '0',
         }
+
+        let listStyle = {
+          padding: '5px 0',
+        }
         return (
           <ol style={style}>
             {this.props.question.options.map((option, index) => {
               return (
-                <li key={index}>
+                <li key={index} style={listStyle}>
                   <input
                     name={this.props.id}
                     value={option}
@@ -68,9 +72,26 @@ class Question extends React.Component {
       case "SLIDER":
         let options = this.props.question.options;
 
+        style = {
+          width: '300px',
+        }
+
+        let sliderStyle = {
+          marginTop: '10px',
+          width: '60%',
+        }
+
+        let textStyle = {
+          marginLeft: '10px',
+          verticalAlign: 'middle'
+        }
+
+        // slider style will be completed using css slider styling
+
         return (
-          <p>
+          <p style={style}>
             <input
+              style={sliderStyle}
               type='range'
               min={options[0]}
               max={options[1]}
@@ -80,7 +101,7 @@ class Question extends React.Component {
               }}
               defaultValue={options[0]}
             />
-            <span> {this.state.answer}</span>
+            <span style={textStyle}>{this.state.answer} years old</span>
           </p>
         )
 
@@ -96,15 +117,15 @@ class Question extends React.Component {
         opacity: '1',
         zIndex: '0',
 
-        transition: 'opacity 0.5s',
-        transitionDelay: '0.5s',
+        transition: 'opacity 0.25s',
+        transitionDelay: '0.25s',
       }
     } else {
       style = {
         opacity: '0',
         zIndex: '-1',
 
-        transition: 'opacity 0.5s',
+        transition: 'opacity 0.25s',
         transitionDelay: '0s',
       }
     }

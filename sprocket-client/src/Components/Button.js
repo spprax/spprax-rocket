@@ -15,12 +15,13 @@ class Button extends React.Component {
   render() {
     const styleDiv = {
       boxStyle: 'border-box',
-      textAlign: 'center',
 
-      padding: '10px 0',
+      padding: '10px 0 10px 10px',
       width: '100px',
-      border: '2px solid #555',
-      borderRadius: '10px',
+      background: 'turquoise',
+      fontWeight: '500',
+      fontSize: '0.8em',
+      //border: '2px solid #555',
 
       'transition': "opacity 0.25s"
     }
@@ -32,9 +33,19 @@ class Button extends React.Component {
       margin: '0'
     }
 
+    const stylePrompt = {
+      fontSize: '0.65em',
+      fontWeight: 'bold',
+      verticalAlign: 'middle',
+      marginLeft: '5px',
+      textTransform: 'uppercase',
+    }
+
     return (
       <div className='btn' onClick={this.handleClick} style={styleDiv}>
-        <p style={styleText}>{ this.props.text }</p>
+        <p style={styleText}>
+          { this.props.text }
+          <span className='key-prompt' style={stylePrompt}>({this.props.keyPrompt})</span></p>
       </div>
     );
   }
