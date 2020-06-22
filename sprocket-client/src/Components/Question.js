@@ -100,7 +100,7 @@ class Question extends React.Component {
         let options = this.props.question.options;
 
         style = {
-          width: '300px',
+          width: '350px',
         }
 
         let sliderStyle = {
@@ -128,7 +128,7 @@ class Question extends React.Component {
               }}
               defaultValue={options[0]}
             />
-            <span style={textStyle}>{this.state.answer} years old</span>
+            <span style={textStyle}>{this.state.answer} {this.props.question.prompt}</span>
           </p>
         )
 
