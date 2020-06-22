@@ -12,6 +12,8 @@ body {
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
+
+  outline: none;
 }
 
 .question-container {
@@ -29,6 +31,18 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
+
+  input[type='text'] {
+    transition-duration: 0.25s;
+    transition-property: border-bottom;
+
+    &:focus {
+      border-bottom: 1px solid #222 !important;
+
+      transition-duration: 0.25s;
+      transition-property: border-bottom;
+    }
+  }
 
   input[type='range'] {
     $backgroundThumb: grey;
@@ -63,7 +77,7 @@ body {
       transition-duration: 0.25s;
 
       &:hover {
-        background: turquoise;
+        background: #aaa;
         transition-duration: 0.25s;
       }
     }

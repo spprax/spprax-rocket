@@ -18,7 +18,7 @@ class Button extends React.Component {
 
       padding: '10px 0 10px 10px',
       width: '100px',
-      background: 'turquoise',
+      background: this.props.fgColor ? this.props.fgColor : 'lightgrey',
       fontWeight: '500',
       fontSize: '0.8em',
       //border: '2px solid #555',
@@ -39,6 +39,7 @@ class Button extends React.Component {
       verticalAlign: 'middle',
       marginLeft: '5px',
       textTransform: 'uppercase',
+      'display': (this.props.keyPrompt ? 'inline-block' : 'none')
     }
 
     return (

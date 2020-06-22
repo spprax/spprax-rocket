@@ -11,6 +11,22 @@ class Question extends React.Component {
 
     if (qType === "SLIDER") {
       this.state.answer = this.props.question.options[0];
+      this.props.onChange(this.state.answer);
+    }
+
+    this.setSelection = this.setSelection.bind(this);
+  }
+
+  componentDidMount() {
+    this.componentDidUpdate();
+  }
+
+  componentDidUpdate() {
+    if (this.props.toggleOn) {
+      console.log("Component", this.props.id, "toggled on");
+      window.addEventListener("keydown", this.setSelection);
+    } else {
+      window.removeEventListener('keydown', this.setSelection);
     }
   }
 
@@ -26,21 +42,32 @@ class Question extends React.Component {
 
         let listStyle = {
           padding: '5px 0',
+          outline: 'none'
         }
+
+        const stylePrompt = {
+          fontSize: '0.8em',
+          fontWeight: '500',
+          display: 'inline-block',
+          verticalAlign: 'center',
+          marginLeft: '5px',
+          textTransform: 'uppercase',
+        }
+
         return (
           <ol style={style}>
             {this.props.question.options.map((option, index) => {
+              let selected = this.props.currentAnswer === option;
               return (
                 <li key={index} style={listStyle}>
                   <input
                     name={this.props.id}
-                    value={option}
                     type='radio'
                     onChange={e => {
-                      this.props.onChange(e.target.value);
-                      this.setState({ answer: e.target.value});
+                      this.props.onChange(option)
                     }}
-                  /> {option}
+                    checked={selected}
+                  /> {option} <span style={stylePrompt}>[{String.fromCharCode(97 + index).toUpperCase()}]</span>
                 </li>
               );
             })}
@@ -54,7 +81,7 @@ class Question extends React.Component {
           border: "0",
           outline: "none",
 
-          borderBottom: "1px solid #555"
+          borderBottom: "1px solid #777"
         };
 
         return (
@@ -64,8 +91,8 @@ class Question extends React.Component {
             placeholder={this.props.question.prompt}
             onChange={e => {
               this.props.onChange(e.target.value);
-              this.setState({ answer: e.target.value});
             }}
+            disabled={this.props.toggleOn ? undefined : "disabled"}
           />
         );
 
@@ -110,12 +137,32 @@ class Question extends React.Component {
     }
   }
 
+  setSelection(event) {
+    let selection = event.key;
+
+    if (selection === "Enter") {
+      this.props.submit();
+      console.log(this.props.currentAnswer);
+      return;
+    }
+
+    if (this.props.question.type.toUpperCase() === "MULTICHOICE" && selection) {
+      let index = selection.toLowerCase().charCodeAt(0) - 97;
+
+      if (this.props.question.options[index]) {
+        this.props.onChange(this.props.question.options[index]);
+      }
+    }
+
+  }
+
   render() {
     let style;
     if (this.props.toggleOn) {
       style = {
         opacity: '1',
         zIndex: '0',
+        outline: 'none',
 
         transition: 'opacity 0.25s',
         transitionDelay: '0.25s',
@@ -132,7 +179,11 @@ class Question extends React.Component {
 
     return (
 
-      <li className='question' style={style}>
+      <li
+        className='question'
+        style={style}
+        tabIndex={this.props.toggleOn ? "0" : undefined}
+      >
         <div className='question-content'>
           <h4><span>{parseInt(this.props.question.id) + 1}. </span>{this.props.question.content}</h4>
           {this.renderInputMethod()}

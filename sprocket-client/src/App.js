@@ -66,17 +66,33 @@ class App extends React.Component {
 
   handleSubmit(...args) {
     console.log("Make ajax call here.");
+    console.log(this.state.qAnswers);
+    this.setState({ currentQuestionIndex : this.state.currentQuestionIndex + 1});
+
+    fetch('/api/submit', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          idArr: this.state.questions.map((question, index) => {
+            return question.id;
+          }),
+          titleArr: this.state.questions.map((question, index) => {
+            return question.title;
+          }),
+          answers: this.state.qAnswers
+        })
+      }
+    );
   }
 
   handleKeyPress(event) {
     switch (event.key) {
-      case "n":
       case "Enter":
         this.handleChangeIndex(1);
-        break;
-
-      case "p":
-        this.handleChangeIndex(-1);
         break;
 
       default:
@@ -87,20 +103,22 @@ class App extends React.Component {
   render() {
     let currentIndex = this.state.currentQuestionIndex;
 
-    let questionList = this.state.questions.map((qn) => {
+    let questionList = this.state.questions.map((qn, index) => {
       return (
         <Question
-          key={qn.id}
-          question={this.state.questions[qn.id]}
-          toggleOn={parseInt(qn.id) === currentIndex}
-          id={qn.id}
+          key={index}
+          question={this.state.questions[index]}
+          toggleOn={index === currentIndex}
+          id={`qn-${index}`}
           onChange={this.setAnswer}
+          currentAnswer={this.state.qAnswers[index]}
+          submit={() => this.handleKeyPress({ key : "Enter"})}
         />
       );
     })
 
     return (
-      <div className='app' onKeyDown={this.handleKeyPress} tabIndex="0">
+      <div className='app'>
         <h1>
           { this.state.title }
         </h1>
@@ -112,10 +130,10 @@ class App extends React.Component {
         <div className='btn-container'>
           <Button
             text='Previous'
-            keyPrompt="P"
             onClick={this.handleChangeIndex}
             direction={-1}
-            toggleOn={this.state.currentQuestionIndex !== 0}
+            toggleOn={this.state.currentQuestionIndex !== 0 && this.state.currentQuestionIndex !== this.state.questions.length}
+            fgColor='lightgrey'
           />
 
           <Button
@@ -124,6 +142,7 @@ class App extends React.Component {
             onClick={this.handleSubmit}
             direction='submit'
             toggleOn={this.state.currentQuestionIndex + 1 === this.state.questions.length}
+            fgColor='turquoise'
           />
 
           <Button
@@ -132,6 +151,7 @@ class App extends React.Component {
             onClick={this.handleChangeIndex}
             direction={1}
             toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
+            fgColor='turquoise'
           />
         </div>
 
@@ -139,6 +159,7 @@ class App extends React.Component {
           currentIndex={this.state.currentQuestionIndex}
           indexLength={this.state.questions.length}
           toggleOn={this.state.questions.length !== 0}
+          fgColor='turquoise'
         />
       </div>
     );

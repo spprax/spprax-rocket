@@ -36,7 +36,7 @@ class ProgressBar extends React.Component {
       top: '0',
       zIndex: 1,
       borderRadius: '0',
-      backgroundColor: 'turquoise',
+      backgroundColor: this.props.fgColor ? this.props.fgColor : 'lightgrey',
       width: `${Math.round(progressRatio * width)}px`,
 
       transition: 'width 0.25s'
