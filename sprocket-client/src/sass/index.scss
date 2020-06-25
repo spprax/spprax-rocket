@@ -5,6 +5,21 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
+@-webkit-keyframes app-title-fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-moz-keyframes app-title-fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes app-title-fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 .app {
   width: 100vw;
   height: 100vh;
@@ -14,19 +29,32 @@ body {
   justify-content: center;
 
   outline: none;
+
+  .app-title {
+    -webkit-animation: app-title-fade 1s 0.25s 2 alternate;
+    -moz-animation: app-title-fade 1s 0.25s 2 alternate;
+    animation: app-title-fade 1s 0.25s 2 alternate;
+    animation-fill-mode: both;
+
+    position: absolute;
+  }
+
+  .app-content {
+    transition: opacity 0.5s linear 1s;
+  }
 }
 
 .question-container {
-  position: absolute;
-  width: 400px;
-  height: 300px;
-  transform: translate(0, -150px);
+  position: relative;
+
+  width: 300px;
+  height: 250px;
 }
 
 .question {
   position: absolute;
-  display: flex;
-  justify-content: center;
+  bottom: 50%;
+  transform: translateY(50%);
 
   list-style: none;
   margin: 0;

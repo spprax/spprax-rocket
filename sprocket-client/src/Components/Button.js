@@ -23,10 +23,11 @@ class Button extends React.Component {
       fontSize: '0.8em',
       //border: '2px solid #555',
 
-      'transition': "opacity 0.25s"
+      'transition': 'opacity 0.25s, visibility 0.25s'
     }
 
     styleDiv.opacity = this.props.toggleOn ? "1" : "0";
+    styleDiv.visibility = this.props.toggleOn ? "visible" : "hidden";
 
     const styleText = {
       padding: '0',

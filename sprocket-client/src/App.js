@@ -10,7 +10,6 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      title: "",
       questions: [],
       currentQuestionIndex: 0,
 
@@ -41,8 +40,7 @@ class App extends React.Component {
     });
   }
 
-  setAnswer(answer) {
-    let index = this.state.currentQuestionIndex;
+  setAnswer(answer, index) {
     // Change current answer object based on new values.
     let currentAnswers = this.state.qAnswers;
     currentAnswers[index] = answer;
@@ -101,66 +99,71 @@ class App extends React.Component {
   }
 
   render() {
-    let currentIndex = this.state.currentQuestionIndex;
+    let styleContent = {
+      opacity: '0'
+    }
 
-    let questionList = this.state.questions.map((qn, index) => {
-      return (
-        <Question
-          key={index}
-          question={this.state.questions[index]}
-          toggleOn={index === currentIndex}
-          id={`qn-${index}`}
-          onChange={this.setAnswer}
-          currentAnswer={this.state.qAnswers[index]}
-          submit={() => this.handleKeyPress({ key : "Enter"})}
-        />
-      );
-    })
+    if (this.state.questions.length) {
+      styleContent.opacity = '1';
+    }
 
     return (
+
       <div className='app'>
-        <h1>
-          { this.state.title }
-        </h1>
+        <h1 className='app-title'>{this.props.title}</h1>
 
-        <ul className='question-container'>
-          {questionList}
-        </ul>
+        <div className='app-content' style={styleContent}>
+          <ul className='question-container'>
+            {this.state.questions.map((qn, index) => {
+              return (
+                <Question
+                  key={index}
+                  question={this.state.questions[index]}
+                  toggleOn={index === this.state.currentQuestionIndex}
+                  id={`qn-${index}`}
+                  onChange={(answer) => this.setAnswer(answer, index)}
+                  currentAnswer={this.state.qAnswers[index]}
+                  submit={() => this.handleKeyPress({ key : "Enter"})}
+                />
+              );
+            })}
+          </ul>
 
-        <div className='btn-container'>
-          <Button
-            text='Previous'
-            onClick={this.handleChangeIndex}
-            direction={-1}
-            toggleOn={this.state.currentQuestionIndex !== 0 && this.state.currentQuestionIndex !== this.state.questions.length}
-            fgColor='lightgrey'
-          />
+          <div className='btn-container'>
+            <Button
+              text='Previous'
+              onClick={this.handleChangeIndex}
+              direction={-1}
+              toggleOn={this.state.currentQuestionIndex !== 0 && this.state.currentQuestionIndex !== this.state.questions.length}
+              fgColor='lightgrey'
+            />
 
-          <Button
-            text='Submit'
-            keyPrompt='Ent.'
-            onClick={this.handleSubmit}
-            direction='submit'
-            toggleOn={this.state.currentQuestionIndex + 1 === this.state.questions.length}
-            fgColor='turquoise'
-          />
+            <Button
+              text='Submit'
+              keyPrompt='Ent.'
+              onClick={this.handleSubmit}
+              direction='submit'
+              toggleOn={this.state.currentQuestionIndex + 1 === this.state.questions.length}
+              fgColor='turquoise'
+            />
 
-          <Button
-            text='Next'
-            keyPrompt='Ent.'
-            onClick={this.handleChangeIndex}
-            direction={1}
-            toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
+            <Button
+              text='Next'
+              keyPrompt='Ent.'
+              onClick={this.handleChangeIndex}
+              direction={1}
+              toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
+              fgColor='turquoise'
+            />
+          </div>
+
+          <ProgressBar
+            currentIndex={this.state.currentQuestionIndex}
+            indexLength={this.state.questions.length}
+            toggleOn={this.state.questions.length !== 0}
             fgColor='turquoise'
           />
         </div>
-
-        <ProgressBar
-          currentIndex={this.state.currentQuestionIndex}
-          indexLength={this.state.questions.length}
-          toggleOn={this.state.questions.length !== 0}
-          fgColor='turquoise'
-        />
       </div>
     );
   }
