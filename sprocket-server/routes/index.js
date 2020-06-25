@@ -31,6 +31,16 @@ function makeJsonResponse(row) {
   }
 }
 
+router.post('/api/submit', async function(req, res, next) {
+  let answers = req.body;
+
+  console.log(answers.titleArr);
+
+  await sheetsmodel.saveQAnswer(await sheetsmodel.getDoc(), answers);
+
+  res.send("Successful POST request made.");
+});
+
 /**
  * access to API by providing an ID
  */

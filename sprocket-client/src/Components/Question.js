@@ -1,92 +1,71 @@
 import React from 'react';
 
+import QuestionMultichoice from './QuestionTypes/QuestionMultichoice';
+import QuestionSlider from './QuestionTypes/QuestionSlider';
+import QuestionText from './QuestionTypes/QuestionText';
+
 class Question extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = { answer: undefined };
-
     // Setting default values
+
+    this.setSelection = this.setSelection.bind(this);
+  }
+
+  componentDidMount() {
+    this.componentDidUpdate();
+
     let qType = this.props.question.type.toUpperCase();
+    console.log(qType, this.props.id);
 
     if (qType === "SLIDER") {
-      this.state.answer = this.props.question.options[0];
+      this.props.onChange(this.props.question.options[0]);
+      console.log("Set!");
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.toggleOn) {
+      console.log("Component", this.props.id, "toggled on");
+      window.addEventListener("keydown", this.setSelection);
+    } else {
+      window.removeEventListener('keydown', this.setSelection);
     }
   }
 
   renderInputMethod() {
-    let style;
-
     switch (this.props.question.type.toUpperCase()) {
       case "MULTICHOICE":
-        style = {
-          listStyle: 'none',
-          padding: '0',
-        }
-        return (
-          <ol style={style}>
-            {this.props.question.options.map((option, index) => {
-              return (
-                <li key={index}>
-                  <input
-                    name={this.props.id}
-                    value={option}
-                    type='radio'
-                    onChange={e => {
-                      this.props.onChange(e.target.value);
-                      this.setState({ answer: e.target.value});
-                    }}
-                  /> {option}
-                </li>
-              );
-            })}
-          </ol>
-        );
+        return <QuestionMultichoice {...this.props} />;
 
       case "INPUT":
-        style = {
-          boxStyle: 'border-box',
-          padding: '10px',
-          border: "0",
-          outline: "none",
-
-          borderBottom: "1px solid #555"
-        };
-
-        return (
-          <input
-            style={style}
-            type='text'
-            placeholder={this.props.question.prompt}
-            onChange={e => {
-              this.props.onChange(e.target.value);
-              this.setState({ answer: e.target.value});
-            }}
-          />
-        );
+        return <QuestionText {...this.props} />;
 
       case "SLIDER":
-        let options = this.props.question.options;
-
-        return (
-          <p>
-            <input
-              type='range'
-              min={options[0]}
-              max={options[1]}
-              onChange={e => {
-                this.props.onChange(e.target.value);
-                this.setState({ answer: e.target.value});
-              }}
-              defaultValue={options[0]}
-            />
-            <span> {this.state.answer}</span>
-          </p>
-        )
+        return <QuestionSlider {...this.props} />;
 
       default:
         break;
     }
+  }
+
+  setSelection(event) {
+    let selection = event.key;
+
+    if (selection === "Enter") {
+      this.props.submit();
+      console.log(this.props.currentAnswer);
+      return;
+    }
+
+    if (this.props.question.type.toUpperCase() === "MULTICHOICE" && selection) {
+      let index = selection.toLowerCase().charCodeAt(0) - 97;
+
+      if (this.props.question.options[index]) {
+        this.props.onChange(this.props.question.options[index]);
+      }
+    }
+
   }
 
   render() {
@@ -95,23 +74,28 @@ class Question extends React.Component {
       style = {
         opacity: '1',
         zIndex: '0',
+        outline: 'none',
 
-        transition: 'opacity 0.5s',
-        transitionDelay: '0.5s',
+        transition: 'opacity 0.25s',
+        transitionDelay: '0.25s',
       }
     } else {
       style = {
         opacity: '0',
         zIndex: '-1',
 
-        transition: 'opacity 0.5s',
+        transition: 'opacity 0.25s',
         transitionDelay: '0s',
       }
     }
 
     return (
 
-      <li className='question' style={style}>
+      <li
+        className='question'
+        style={style}
+        tabIndex={this.props.toggleOn ? "0" : undefined}
+      >
         <div className='question-content'>
           <h4><span>{parseInt(this.props.question.id) + 1}. </span>{this.props.question.content}</h4>
           {this.renderInputMethod()}

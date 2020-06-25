@@ -9,7 +9,7 @@ import './sass/index.scss';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App title='Powered by Spprax Rocket' />
   </React.StrictMode>,
   document.getElementById('root')
 );

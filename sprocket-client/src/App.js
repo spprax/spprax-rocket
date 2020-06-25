@@ -2,6 +2,7 @@ import React from 'react';
 
 import Question from './Components/Question';
 import Button from './Components/Button';
+import ProgressBar from './Components/ProgressBar';
 
 class App extends React.Component {
 
@@ -9,7 +10,6 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      title: "",
       questions: [],
       currentQuestionIndex: 0,
 
@@ -19,6 +19,7 @@ class App extends React.Component {
     this.handleChangeIndex = this.handleChangeIndex.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.setAnswer = this.setAnswer.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   componentDidMount() {
@@ -39,8 +40,7 @@ class App extends React.Component {
     });
   }
 
-  setAnswer(answer) {
-    let index = this.state.currentQuestionIndex;
+  setAnswer(answer, index) {
     // Change current answer object based on new values.
     let currentAnswers = this.state.qAnswers;
     currentAnswers[index] = answer;
@@ -55,6 +55,8 @@ class App extends React.Component {
 
     if (this.state.questions[currentQuestionIndex + direction]) {
       this.setState({ currentQuestionIndex: currentQuestionIndex += direction });
+    } else if (currentQuestionIndex + direction === this.state.questions.length) {
+      this.handleSubmit();
     } else {
       return (500, "Error: Specified question index does not exist!");
     }
@@ -62,53 +64,104 @@ class App extends React.Component {
 
   handleSubmit(...args) {
     console.log("Make ajax call here.");
+    console.log(this.state.qAnswers);
+    this.setState({ currentQuestionIndex : this.state.currentQuestionIndex + 1});
+
+    fetch('/api/submit', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          idArr: this.state.questions.map((question, index) => {
+            return question.id;
+          }),
+          titleArr: this.state.questions.map((question, index) => {
+            return question.title;
+          }),
+          answers: this.state.qAnswers
+        })
+      }
+    );
+  }
+
+  handleKeyPress(event) {
+    switch (event.key) {
+      case "Enter":
+        this.handleChangeIndex(1);
+        break;
+
+      default:
+        return null;
+    }
   }
 
   render() {
-    let currentIndex = this.state.currentQuestionIndex;
+    let styleContent = {
+      opacity: '0'
+    }
 
-    let questionList = this.state.questions.map((qn) => {
-      return (
-        <Question
-          key={qn.id}
-          question={this.state.questions[qn.id]}
-          toggleOn={parseInt(qn.id) === currentIndex}
-          id={qn.id}
-          onChange={this.setAnswer}
-        />
-      );
-    })
+    if (this.state.questions.length) {
+      styleContent.opacity = '1';
+    }
 
     return (
-      <div>
-        <h1>
-          { this.state.title }
-        </h1>
 
-        <ul>
-          {questionList}
-        </ul>
+      <div className='app'>
+        <h1 className='app-title'>{this.props.title}</h1>
 
-        <div className='btn-container'>
-          <Button
-            text='Previous'
-            onClick={this.handleChangeIndex}
-            direction={-1}
-            toggleOn={this.state.currentQuestionIndex !== 0}
-          />
+        <div className='app-content' style={styleContent}>
+          <ul className='question-container'>
+            {this.state.questions.map((qn, index) => {
+              return (
+                <Question
+                  key={index}
+                  question={this.state.questions[index]}
+                  toggleOn={index === this.state.currentQuestionIndex}
+                  id={`qn-${index}`}
+                  onChange={(answer) => this.setAnswer(answer, index)}
+                  currentAnswer={this.state.qAnswers[index]}
+                  submit={() => this.handleKeyPress({ key : "Enter"})}
+                />
+              );
+            })}
+          </ul>
 
-          <Button
-            text='Submit'
-            onClick={this.handleSubmit}
-            direction='submit'
-            toggleOn={this.state.currentQuestionIndex + 1 === this.state.questions.length}
-          />
+          <div className='btn-container'>
+            <Button
+              text='Previous'
+              onClick={this.handleChangeIndex}
+              direction={-1}
+              toggleOn={this.state.currentQuestionIndex !== 0 && this.state.currentQuestionIndex !== this.state.questions.length}
+              fgColor='lightgrey'
+            />
 
-          <Button
-            text='Next'
-            onClick={this.handleChangeIndex}
-            direction={1}
-            toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
+            <Button
+              text='Submit'
+              keyPrompt='Ent.'
+              onClick={this.handleSubmit}
+              direction='submit'
+              toggleOn={this.state.currentQuestionIndex + 1 === this.state.questions.length}
+              fgColor='turquoise'
+            />
+
+            <Button
+              text='Next'
+              keyPrompt='Ent.'
+              onClick={this.handleChangeIndex}
+              direction={1}
+              toggleOn={this.state.currentQuestionIndex + 1 < this.state.questions.length}
+              fgColor='turquoise'
+            />
+          </div>
+
+          <ProgressBar
+            currentIndex={this.state.currentQuestionIndex}
+            indexLength={this.state.questions.length}
+            toggleOn={this.state.questions.length !== 0}
+            fgColor='turquoise'
           />
         </div>
       </div>
